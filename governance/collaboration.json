@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": "SysLens",
+  "version": "1.0.0",
+  "roles": {
+    "antigravity": {
+      "display_name": "Antigravity",
+      "allowed_phases": ["planning", "implementation", "documentation_delivery"],
+      "allowed_paths": [
+        "^docs/.*",
+        "^governance/.*",
+        "^AGENTS\\.md$",
+        "^src/SysLens\\.App/.*",
+        "^scripts/governance/.*"
+      ],
+      "forbidden_paths": [
+        "^src/SysLens\\.Core/.*",
+        "^src/Tools/.*/Native/.*",
+        "^src/Tools/.*/Services/.*"
+      ]
+    },
+    "pi-desktop": {
+      "display_name": "PI-Desktop",
+      "allowed_phases": ["implementation", "rework"],
+      "allowed_paths": [
+        "^src/SysLens\\.Core/.*",
+        "^src/SysLens\\.Sdk/.*",
+        "^src/Tools/.*/Native/.*",
+        "^src/Tools/.*/Services/.*",
+        "^tests/.*"
+      ],
+      "forbidden_paths": [
+        "^docs/.*",
+        "^governance/(?!handoffs/).*",
+        "^src/SysLens\\.App/.*",
+        "^AGENTS\\.md$"
+      ]
+    }
+  },
+  "phases": [
+    "planning",
+    "implementation",
+    "documentation_delivery",
+    "rework"
+  ],
+  "state_transitions": {
+    "code": [
+      { "from": "planning", "to": "implementation", "by": "antigravity", "next_role": "pi-desktop" },
+      { "from": "implementation", "to": "documentation_delivery", "by": "pi-desktop", "next_role": "antigravity" },
+      { "from": "documentation_delivery", "to": "rework", "by": "antigravity", "next_role": "pi-desktop" },
+      { "from": "rework", "to": "documentation_delivery", "by": "pi-desktop", "next_role": "antigravity" }
+    ],
+    "frontend": [
+      { "from": "planning", "to": "implementation", "by": "antigravity", "next_role": "antigravity" },
+      { "from": "implementation", "to": "documentation_delivery", "by": "antigravity", "next_role": "antigravity" }
+    ],
+    "docs": [
+      { "from": "planning", "to": "documentation_delivery", "by": "antigravity", "next_role": "antigravity" }
+    ]
+  }
+}

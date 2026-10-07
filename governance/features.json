@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": "SysLens",
+  "features": [
+    {
+      "id": "G01",
+      "name": "工程治理与双Agent协作规范",
+      "description": "对标 mysql-mcp 建立工程规范、需求/任务台账、双 Agent (Antigravity × PI-Desktop) 状态机交接与变更管理闭环",
+      "status": "in_progress",
+      "requirements": ["R01"],
+      "milestone": "v0.1.0-alpha"
+    },
+    {
+      "id": "G02",
+      "name": "插件 SDK 规范与核心接口契约",
+      "description": "基于接口先行原则定义 IToolPlugin、IPluginContext 与进程探查接口",
+      "status": "planned",
+      "requirements": ["R02"],
+      "milestone": "v0.1.0-alpha"
+    },
+    {
+      "id": "G03",
+      "name": "宿主外壳与动态插件加载器",
+      "description": "WinUI 3 Fluent 现代导航外壳，集成 AssemblyLoadContext 隔离加载与 UAC 提权服务",
+      "status": "planned",
+      "requirements": ["R01", "R02", "R03"],
+      "milestone": "v0.1.0"
+    },
+    {
+      "id": "G04",
+      "name": "Process Explorer Native 探查引擎",
+      "description": "Win32 P/Invoke 与 NT Native API 封装、高精多核 CPU 增量计算与父子进程树重构算法",
+      "status": "planned",
+      "requirements": ["R04", "R05", "R08", "R09", "R10"],
+      "milestone": "v0.1.0"
+    },
+    {
+      "id": "G05",
+      "name": "Process Explorer 双面板交互界面",
+      "description": "WinUI 3 进程树主面板、即输即搜过滤、右键进程控制与下方模块/句柄/线程检查器",
+      "status": "planned",
+      "requirements": ["R04", "R06", "R07", "R08", "R09", "R10"],
+      "milestone": "v0.1.0"
+    }
+  ]
+}

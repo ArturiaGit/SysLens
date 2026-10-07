@@ -1,0 +1,33 @@
+[
+  {
+    "event_id": "EVT-2F0B39F5",
+    "timestamp": "2026-10-07T13:18:19Z",
+    "task_id": "TASK-GOV-001",
+    "action": "begin",
+    "role": "antigravity",
+    "phase": "planning",
+    "prev_digest": "INITIAL_GENESIS_DIGEST",
+    "summary": "Stage started: planning by antigravity"
+  },
+  {
+    "event_id": "EVT-A64CE3AE",
+    "timestamp": "2026-10-07T13:18:20Z",
+    "task_id": "TASK-GOV-001",
+    "action": "finish",
+    "role": "antigravity",
+    "phase": "planning",
+    "prev_digest": "043209597745be6e6ffc2e02230fcd5336190d1fa6ea65165d27ef90de5f96cf",
+    "summary": "完成全套治理规范矩阵、双 Agent 协作与交接脚本初始化"
+  },
+  {
+    "event_id": "EVT-F903C1C3",
+    "timestamp": "2026-10-07T13:18:28Z",
+    "task_id": "TASK-GOV-001",
+    "action": "accept",
+    "role": "antigravity",
+    "phase": "planning",
+    "accepted_event": "EVT-A64CE3AE",
+    "prev_digest": "74151000f1c513652ff15cc2a4343444b6c96eb3fa51a655104b3e18f64ac262",
+    "summary": "Handoff accepted by antigravity"
+  }
+]
