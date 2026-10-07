@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": "SysLens",
+  "checks": [
+    {
+      "id": "CHK-01",
+      "name": "规范文档完整性检查",
+      "description": "确保 AGENTS.md 以及 docs/ 下的所有核心规范文件存在且非空"
+    },
+    {
+      "id": "CHK-02",
+      "name": "治理台账一致性检查",
+      "description": "确保 governance/features.json 与 governance/tasks.json 数据格式合法且双向引用正常"
+    },
+    {
+      "id": "CHK-03",
+      "name": "变更记录与索引同步检查",
+      "description": "确保进行中或已交付任务对应的 docs/changes/ 文档在 README.md 中有登记且文件存在"
+    },
+    {
+      "id": "CHK-04",
+      "name": "双 Agent 角色与物理路径合规检查",
+      "description": "确保暂存区未包含违反角色 allowed_paths 或包含 forbidden_paths 的越权修改"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "project": "SysLens",
+  "tasks": [
+    {
+      "id": "TASK-GOV-001",
+      "feature_id": "G01",
+      "title": "工程治理基线、规范矩阵与双 Agent 协作架构",
+      "mode": "docs",
+      "owner": "antigravity",
+      "status": "completed",
+      "phase": "documentation_delivery",
+      "branch": "chore/governance-baseline",
+      "change_doc": "docs/changes/2026-10-07-TASK-GOV-001-governance-baseline-and-collaboration.md"
+    },
+    {
+      "id": "TASK-SDK-001",
+      "feature_id": "G02",
+      "title": "插件标准 SDK 契约与进程引擎模型定义",
+      "mode": "code",
+      "owner": "antigravity",
+      "status": "ready",
+      "phase": "planning",
+      "branch": "feat/TASK-SDK-001-plugin-sdk-contracts",
+      "change_doc": null
+    },
+    {
+      "id": "TASK-CORE-001",
+      "feature_id": "G03",
+      "title": "宿主核心服务：插件隔离加载器与 Windows 提权服务",
+      "mode": "code",
+      "owner": "pi-desktop",
+      "status": "pending",
+      "phase": "planning",
+      "branch": "feat/TASK-CORE-001-plugin-loader-and-elevation",
+      "change_doc": null
+    },
+    {
+      "id": "TASK-SHELL-001",
+      "feature_id": "G03",
+      "title": "WinUI 3 宿主外壳与 Fluent 现代导航窗口",
+      "mode": "frontend",
+      "owner": "antigravity",
+      "status": "pending",
+      "phase": "planning",
+      "branch": "feat/TASK-SHELL-001-fluent-host-shell",
+      "change_doc": null
+    },
+    {
+      "id": "TASK-PE-001",
+      "feature_id": "G04",
+      "title": "Process Explorer Native 采集引擎与进程树重构算法",
+      "mode": "code",
+      "owner": "pi-desktop",
+      "status": "pending",
+      "phase": "planning",
+      "branch": "feat/TASK-PE-001-native-process-collector",
+      "change_doc": null
+    },
+    {
+      "id": "TASK-PE-002",
+      "feature_id": "G05",
+      "title": "Process Explorer 双面板交互界面与详细检查器",
+      "mode": "frontend",
+      "owner": "antigravity",
+      "status": "pending",
+      "phase": "planning",
+      "branch": "feat/TASK-PE-002-dual-panel-views",
+      "change_doc": null
+    }
+  ]
+}
