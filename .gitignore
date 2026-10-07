@@ -1,0 +1,28 @@
+## Build and Visual Studio / Rider
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+.idea/
+.vscode/
+
+## Windows App SDK / WinUI
+AppPackages/
+BundleArtifacts/
+Package.StoreAssociation.xml
+_pkginfo.txt
+
+## OS / Temp
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.tmp
+*.log
+
+## Scratch / Local Agent Scratch
+.pi/
+*.local
