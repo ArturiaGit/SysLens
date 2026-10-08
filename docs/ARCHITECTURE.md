@@ -1,64 +1,104 @@
-# SysLens 系统架构设计 (ARCHITECTURE.md)
+# SysLens 系统架构设计与技术实现 (ARCHITECTURE.md)
 
-## 1. 架构总览与分层设计
+## 1. 系统总体架构与分层设计
 
-SysLens 遵循严格的关注点分离与插件化微内核架构：
+SysLens 遵循严格的关注点分离与插件化微内核架构，共划分为三层物理架构：
 
 ```mermaid
 graph TD
-    subgraph UI Layer ["展示与交互层 (Antigravity 专职)"]
-        MainWindow["SysLens.App.MainWindow (Fluent NavigationView)"]
-        PEView["SysLens.Tools.ProcessExplorer.Views (双面板 XAML)"]
+    subgraph Presentation ["1. 表现交互层 (WinUI 3 XAML / MVVM - Antigravity 专职)"]
+        MainWindow["SysLens.App.MainWindow (Mica Window)"]
+        NavHost["NavigationView 插件导航宿主"]
+        PEView["ProcessExplorerView (上方进程树 + 下方多标签检查器)"]
+        TitleBarWidget["自定义标题栏 (全局搜索 / 权限胶囊)"]
     end
 
-    subgraph SDK Layer ["契约规范层 (接口先行, 共同维护)"]
-        PluginSdk["SysLens.Sdk (IToolPlugin, IPluginContext)"]
-        EngineSdk["SysLens.Sdk.Process (IProcessCollector, Models)"]
+    subgraph Contract ["2. 契约规范层 (SysLens.Sdk - 共同维护, 接口先行)"]
+        IToolPlugin["IToolPlugin (插件生命周期契约)"]
+        IPluginContext["IPluginContext (宿主服务上下文)"]
+        IProcCollector["IProcessCollectorService (采样契约)"]
+        IProcControl["IProcessControlService (进程控制契约)"]
+        DTOs["不可变数据模型 (ProcessNode, ModuleInfo, HandleInfo, ThreadInfo)"]
     end
 
-    subgraph Core Layer ["底层核心与引擎层 (PI-Desktop 专职)"]
-        Loader["SysLens.Core.Plugins.PluginLoader (AssemblyLoadContext)"]
-        Elevation["SysLens.Core.Security.ElevationService (Token 提权)"]
-        Collector["SysLens.Tools.ProcessExplorer.Services.ProcessCollector"]
-        Native["SysLens.Tools.ProcessExplorer.Native (Win32 & NtApi)"]
+    subgraph CoreEngine ["3. 底层系统与核心引擎层 (PI-Desktop 专职)"]
+        Loader["PluginLoader (AssemblyLoadContext 隔离加载)"]
+        Elevation["ElevationService (Token 提权服务)"]
+        Collector["ProcessCollectorService (后台周期性采样引擎)"]
+        TreeBuilder["ProcessTreeBuilder (拓扑重构与环路检测)"]
+        NativeWrapper["Win32 & NT Native P/Invoke 接口层"]
     end
 
-    MainWindow --> PluginSdk
-    MainWindow --> Loader
-    PEView --> EngineSdk
-    Collector --> EngineSdk
-    Collector --> Native
-    Loader --> PluginSdk
+    MainWindow --> NavHost
+    MainWindow --> TitleBarWidget
+    NavHost --> IToolPlugin
+    PEView --> IProcCollector
+    PEView --> IProcControl
+    PEView --> DTOs
+
+    Loader --> IToolPlugin
+    Elevation --> IPluginContext
+    Collector --> IProcCollector
+    Collector --> TreeBuilder
+    Collector --> NativeWrapper
 ```
 
 ---
 
-## 2. 核心模块与职责划分
+## 2. 线程模型与多核异步采样时序
 
-### 2.1 SysLens.Sdk（插件契约规范）
-- 独立于具体 UI 实现的契约库。
-- 定义 `IToolPlugin`，规定工具元数据（ID、名称、图标、分类、版本）与生命周期回调（`InitializeAsync`, `ShutdownAsync`, `CreateView`）。
-- 定义 `IPluginContext`，向上注入宿主服务（主题变更通知、导航跳转、配置持久化、提权服务）。
-- 定义 `IProcessCollector` 与不可变快照模型 `ProcessSnapshot`、`ModuleInfo`、`HandleInfo`、`ThreadInfo`。
+为确保 WinUI 3 界面在千量级进程环境下以 60 FPS 稳定流畅运行，SysLens 严格执行**后台工作线程采样**与**UI 调度队列合并派发**架构：
 
-### 2.2 SysLens.Core（宿主内核支撑）
-- **`PluginLoader`**：构建独立的 `AssemblyLoadContext`，支持从应用运行目录下的 `Plugins/` 子文件夹探测外部 `.dll`。防止第三方插件依赖项（如 JSON 库、第三方组件）污染宿主进程。
-- **`ElevationService`**：通过 `OpenProcessToken` 与 `GetTokenInformation(TokenElevation)` 实时获取权限状态，提供以 `runas` 动词重启当前程序的提权方法。
+```mermaid
+sequenceDiagram
+    autonumber
+    actor User as 用户界面 (UI Thread)
+    participant VM as ProcessExplorerViewModel
+    participant Dispatcher as DispatcherQueue
+    participant Worker as Background Collector Thread (Task.Run)
+    participant Native as Win32 / NT Native API
 
-### 2.3 SysLens.App（WinUI 3 宿主外壳）
-- 现代 Windows 11 Fluent 界面入口。
-- 左侧 `NavigationView` 自动由 `PluginManager` 发现的插件列表填充。
-- 顶部自定义 `TitleBar` 呈现应用标题、管理员权限徽标（[管理员] / [普通权限]）。
-- 主内容区通过 `Frame` 或 `ContentControl` 承载当前激活工具的视图。
+    Worker->>Worker: 定时器 Tick 触发 (周期 1000ms)
+    Worker->>Native: CreateToolhelp32Snapshot / NtQuerySystemInfo
+    Native-->>Worker: 返回原始进程列表与内核/用户态时间
+    Worker->>Worker: 计算 CPU 增量: Delta(Kernel+User) / Delta(SysTime) / Cores
+    Worker->>Worker: 构建不可变快照 ProcessSnapshot (树重构与孤儿节点收归)
+    Worker->>Dispatcher: DispatcherQueue.TryEnqueue(UpdateSnapshotAction)
+    Dispatcher->>User: 批量更新 UI 绑定数据源 (ObservableCollection)
+    User->>User: 虚拟化网格增量重绘 (绿色新进程 / 红色退出进程淡出)
+```
 
-### 2.4 SysLens.Tools.ProcessExplorer（首款工具）
-- **底层采集器 (`ProcessCollector`)**：
-  - 双采样点 CPU 使用率计算：`Delta(KernelTime + UserTime) / Delta(SystemTime) / NumberOfCores`。
-  - 父子进程树重构算法：从平铺列表构建以树节点嵌套的层级结构，优雅处理孤儿进程（挂载在根节点）。
-- **Native 探查器**：
-  - 模块枚举：`EnumProcessModulesEx` + `GetModuleInformation`。
-  - 句柄枚举：`NtQuerySystemInformation(SystemExtendedHandleInformation)` + 目标进程句柄复制 `DuplicateHandle` + `NtQueryObject`。
-  - 线程枚举：`CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD)`。
-- **双面板交互界面**：
-  - 上方：进程树网格，按 CPU / 内存列排序，快速过滤。
-  - 下方：联动多标签页（Modules / Handles / Threads）。
+- **UI 线程保护准则**：UI 线程绝不直接执行耗时的 Win32 系统调用或遍历句柄，所有探测操作均在后台线程异步执行。
+- **不可变快照派发**：每轮采样输出完整的只读 `ProcessSnapshot`，UI 绑定直接替换数据引用，彻底消除多线程并发读写共享集合的冲突与锁竞争。
+
+---
+
+## 3. 插件隔离加载架构 (`PluginLoader`)
+
+```mermaid
+graph LR
+    subgraph Host ALC ["Host Default AssemblyLoadContext"]
+        HostExe["SysLens.App.exe"]
+        SdkDll["SysLens.Sdk.dll"]
+        WinUIDll["Microsoft.WindowsAppSDK.dll"]
+    end
+
+    subgraph Plugin1 ALC ["PluginLoadContext 1 (ProcessExplorer)"]
+        PEPlugin["SysLens.Tools.ProcessExplorer.dll"]
+        PEDependency["专用分析工具依赖..."]
+    end
+
+    subgraph Plugin2 ALC ["PluginLoadContext 2 (Future Tool)"]
+        FuturePlugin["SysLens.Tools.NetworkMonitor.dll"]
+    end
+
+    HostExe -->|扫描 Plugins/ 目录| Plugin1 ALC
+    HostExe -->|扫描 Plugins/ 目录| Plugin2 ALC
+    Plugin1 ALC -.->|共享引用| SdkDll
+    Plugin2 ALC -.->|共享引用| SdkDll
+```
+
+- **自定义 `PluginLoadContext`**：
+  - 继承自 `System.Runtime.Loader.AssemblyLoadContext`，指定 `isCollectible: true`；
+  - 优先从宿主加载已加载的共享程序集（`SysLens.Sdk`），外部专属依赖则从插件子目录独立解析；
+  - 杜绝不同插件引入不同版本的依赖库（如 Newtonsoft.Json vs System.Text.Json）产生程序集绑定冲突。

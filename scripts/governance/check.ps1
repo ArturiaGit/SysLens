@@ -23,19 +23,31 @@ function Report-Check($id, $name, $success, $details = "") {
     }
 }
 
-# CHK-01: 规范文档完整性
+# CHK-01: 规范文档完整性 (全套生产级矩阵)
 $requiredDocs = @(
     "AGENTS.md",
+    "docs/README.md",
     "docs/REQUIREMENTS.md",
-    "docs/ARCHITECTURE.md",
     "docs/PROJECT_CONSTRAINTS.md",
+    "docs/TECH_STACK.md",
+    "docs/ARCHITECTURE.md",
+    "docs/API_AND_PROTOCOLS.md",
+    "docs/DATA_MODELS.md",
+    "docs/FRONTEND_UI_GUIDELINES.md",
+    "docs/ENGINEERING_TOOLCHAIN.md",
+    "docs/DEPLOYMENT_GUIDE.md",
+    "docs/CODE_REVIEW.md",
+    "docs/GIT_WORKFLOW.md",
     "docs/COLLABORATION_WORKFLOW.md",
     "docs/FULLSTACK_DIVISION_SPECIFICATION.md",
-    "docs/GIT_WORKFLOW.md",
-    "docs/ACCEPTANCE.md",
-    "docs/TESTING_STRATEGY.md",
     "docs/VERSIONING.md",
-    "docs/changes/README.md"
+    "docs/ROADMAP.md",
+    "docs/VISUAL_VERIFICATION.md",
+    "docs/TESTING_STRATEGY.md",
+    "docs/ACCEPTANCE.md",
+    "docs/changes/README.md",
+    "docs/plans/README.md",
+    "docs/verification/README.md"
 )
 
 $missingDocs = @()

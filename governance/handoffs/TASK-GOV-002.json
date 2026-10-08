@@ -1,0 +1,33 @@
+[
+  {
+    "event_id": "EVT-A770DBBD",
+    "timestamp": "2026-10-08T04:48:51Z",
+    "task_id": "TASK-GOV-002",
+    "action": "begin",
+    "role": "antigravity",
+    "phase": "planning",
+    "prev_digest": "INITIAL_GENESIS_DIGEST",
+    "summary": "Stage started: planning by antigravity"
+  },
+  {
+    "event_id": "EVT-1E1C8EBA",
+    "timestamp": "2026-10-08T04:57:43Z",
+    "task_id": "TASK-GOV-002",
+    "action": "finish",
+    "role": "antigravity",
+    "phase": "planning",
+    "prev_digest": "7a9a9e3115fa1b5bd6721e5885c82418733e6014a538830c8ee48cb624cb27d8",
+    "summary": "完成全套 20+ 篇生产级工程规范矩阵补全、深度对标与门禁自检"
+  },
+  {
+    "event_id": "EVT-5ABB8CFB",
+    "timestamp": "2026-10-08T04:57:55Z",
+    "task_id": "TASK-GOV-002",
+    "action": "accept",
+    "role": "antigravity",
+    "phase": "planning",
+    "accepted_event": "EVT-1E1C8EBA",
+    "prev_digest": "f77f769263f77a8af28d4e48c963de1162999a72db604318fe1aff8f0f24e9a8",
+    "summary": "Handoff accepted by antigravity"
+  }
+]
