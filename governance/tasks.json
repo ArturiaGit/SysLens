@@ -14,6 +14,17 @@
       "change_doc": "docs/changes/2026-10-07-TASK-GOV-001-governance-baseline-and-collaboration.md"
     },
     {
+      "id": "TASK-GOV-002",
+      "feature_id": "G01",
+      "title": "全套工程规范矩阵补齐与深度对标",
+      "mode": "docs",
+      "owner": "antigravity",
+      "status": "completed",
+      "phase": "documentation_delivery",
+      "branch": "chore/TASK-GOV-002-comprehensive-spec-matrix",
+      "change_doc": "docs/changes/2026-10-08-TASK-GOV-002-comprehensive-spec-matrix.md"
+    },
+    {
       "id": "TASK-SDK-001",
       "feature_id": "G02",
       "title": "插件标准 SDK 契约与进程引擎模型定义",

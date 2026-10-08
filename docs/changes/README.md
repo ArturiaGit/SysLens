@@ -53,6 +53,7 @@
 | 变更文档 | 关联任务 | 责任方 | 核心亮点 |
 |---|---|---|---|
 | [TASK-GOV-001 规范基线与双 Agent 协作架构](./2026-10-07-TASK-GOV-001-governance-baseline-and-collaboration.md) | TASK-GOV-001 | Antigravity | 建立全套工程规范、双 Agent 协作契约与变更台账 |
+| [TASK-GOV-002 全套工程规范矩阵补齐与深度对标](./2026-10-08-TASK-GOV-002-comprehensive-spec-matrix.md) | TASK-GOV-002 | Antigravity | 补齐全套 20+ 篇生产级工程规范矩阵，深度对标 mysql-mcp 标准 |
 
 ---
 
